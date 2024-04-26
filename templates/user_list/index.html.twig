@@ -1,0 +1,215 @@
+
+
+{# templates/user_list/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}User List{% endblock %}
+
+{% block body %}
+
+<style>h1 {
+    color: #333;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* Style the table */
+.table {
+    width: 100%;
+}
+
+/* Style table header */
+.table thead th {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Style table rows */
+.table tbody tr:nth-of-type(even) {
+    background-color: #f8f9fa;
+}
+
+/* Style table checkboxes */
+.userCheckbox {
+    transform: scale(1.5);
+    margin-left: 5px;
+}
+
+/* Style form buttons */
+.btn-primary, .btn-danger {
+    margin-right: 10px;
+}
+
+/* Style form button icons */
+.btn-primary i, .btn-danger i {
+    margin-right: 5px;
+}
+
+/* Add margin below the form */
+form {
+    margin-bottom: 20px;
+}</style>
+
+
+
+
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Welcome, {{ app.user.username }}!</h1>
+
+        <h2>User List</h2>
+
+        <form id="userForm" method="post">
+            {{ form_widget(form) }}
+
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <div class="btn-group" role="group">
+       
+<button type="button" class="btn btn-primary" onclick="blockSelectedUsers()"><i class="bi bi-lock"></i>Block</button>
+                        <button type="button" class="btn btn-primary" onclick="unblockSelectedUsers()"><i class="bi bi-unlock"></i> Unblock</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteMultipleUsers()"><i class="bi bi-trash"></i> Delete</button>
+
+                          
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-striped mt-3">
+                <thead>
+                    <tr>
+                        <th scope="col"><input type="checkbox" id="selectAll"></th>
+                        <th scope="col">ID</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Roles</th>
+                        <th scope="col">Registration Date</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Last Login</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td><input type="checkbox" class="userCheckbox" name="selected_users[]" value="{{ user.id }}"></td>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.roles|join(', ') }}</td>
+                           
+                            <td>{{ user.registrationDate ? user.registrationDate|date('Y-m-d H:i:s') : '' }}</td>
+
+
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.lastLogin ? user.lastLogin|date('Y-m-d H:i:s') : '' }}</td>
+                            <td>{{ user.status }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    </div>
+<script>
+    const selectAllCheckbox = document.getElementById('selectAll');
+    const userCheckboxes = document.querySelectorAll('.userCheckbox');
+
+    selectAllCheckbox.addEventListener('change', function() {
+        userCheckboxes.forEach(function(checkbox) {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+    });
+</script>
+   <script>
+    function deleteMultipleUsers() {
+        const selectedUsers = Array.from(document.querySelectorAll('.userCheckbox:checked')).map(input => input.value);
+        
+        if (selectedUsers.length === 0) {
+            console.error("No users selected for deletion");
+            return;
+        }
+        
+        fetch("{{ path('delete_selected_users') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ selected_users: selectedUsers })
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("Selected users deleted successfully");
+                // Reload the page to reflect the changes
+                location.reload();
+            } else {
+                console.error("Error deleting selected users");
+            }
+        })
+        .catch(error => {
+            console.error("Error deleting selected users:", error);
+        });
+    }
+
+    
+</script>
+<script>
+    function blockSelectedUsers() {
+        const selectedUsers = Array.from(document.querySelectorAll('.userCheckbox:checked')).map(input => input.value);
+        
+        if (selectedUsers.length === 0) {
+            console.error("No users selected for blocking");
+            return;
+        }
+        
+        selectedUsers.forEach(userId => {
+            fetch("/block-user/" + userId, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ userId: userId })
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log("User with ID " + userId + " blocked successfully");
+                    // Perform UI updates or any additional actions after blocking the user
+                } else {
+                    console.error("Error blocking user with ID " + userId);
+                }
+            })
+            .catch(error => {
+                console.error("Error blocking user with ID " + userId + ":", error);
+            });
+        });
+    }
+
+    function unblockSelectedUsers() {
+    const selectedUsers = Array.from(document.querySelectorAll('.userCheckbox:checked')).map(input => input.value);
+
+    if (selectedUsers.length === 0) {
+        console.error("No users selected for unblocking");
+        return;
+    }
+
+    selectedUsers.forEach(userId => {
+        fetch("/unblock-user/" + userId, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ userId: userId })
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("User with ID " + userId + " unblocked successfully");
+                // Perform UI updates or any additional actions after unblocking the user
+            } else {
+                console.error("Error unblocking user with ID " + userId);
+            }
+        })
+        .catch(error => {
+            console.error("Error unblocking user with ID " + userId + ":", error);
+        });
+    });
+}
+</script>
+{% endblock %}

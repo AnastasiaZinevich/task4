@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .form-control {
+            border-radius: 5px;
+            border-color: #ced4da;
+        }
+
+        .form-control:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .btn-link {
+            color: #007bff;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="card mt-5">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Registration</h1>
+                        
+                        <form method="post" action="{{ path('register') }}" class="needs-validation" novalidate>
+                            {{ form_start(registrationForm) }}
+
+                            <div class="form-group">
+                                <label for="{{ registrationForm.username.vars.id }}">Username:</label>
+                                {{ form_widget(registrationForm.username, {'attr': {'class': 'form-control', 'placeholder': 'Enter your username'}}) }}
+                                {{ form_errors(registrationForm.username) }}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="{{ registrationForm.email.vars.id }}">Email:</label>
+                                {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Enter your email'}}) }}
+                                {{ form_errors(registrationForm.email) }}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="{{ registrationForm.plainPassword.vars.id }}">Password:</label>
+                                {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control', 'placeholder': 'Enter your password'}}) }}
+                                {{ form_errors(registrationForm.plainPassword) }}
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block">Register</button>
+                            {{ form_end(registrationForm) }}
+                        </form>
+
+                        <div class="text-center mt-3">
+                            <a href="{{ path('app_login') }}" class="btn btn-link">Already have an account? Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

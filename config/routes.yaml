@@ -1,5 +1,80 @@
+
+
 controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
-    type: attribute
+    resource: '../src/Controller/'
+    type: annotation
+    
+index:
+    path: /
+    controller: 'App\Controller\UserController::register'
+    
+register:
+    path: /register
+    controller: 'App\Controller\UserController::register'
+    
+login:
+    path: /login
+    controller: 'App\Controller\SecurityController::login'
+    methods: [GET, POST]  
+    
+login_success:
+    path: /login/success
+    controller: 'App\Controller\SecurityController::loginSuccess'
+    
+user_index:
+    path: /user/index
+    controller: 'App\Controller\UserController::index'
+
+app_login:  
+    path: /login
+    controller: 'App\Controller\SecurityController::login'
+    methods: [GET, POST]  
+
+app_logout: 
+    path: /logout
+    controller: 'App\Controller\SecurityController::logout'
+
+user_list:
+    path: /user_list
+    controller: 'App\Controller\UserListController::index'
+
+success_page:
+    path: /user/list/success
+    controller: 'App\Controller\UserListController::successPage'
+
+update_last_login_date:
+    path: /update_last_login_date
+    controller: 'App\Controller\UserListController::updateLastLoginDate'
+
+
+
+block_selected_users:
+    path: /block_selected_users
+    controller: App\Controller\UserListController::blockSelectedUsers'
+    methods: [POST]
+
+app_unblock_users:
+    path: /unblock-users
+    controller: App\Controller\UserListController::unblockUsers
+    methods: [POST]
+
+
+
+block_user:
+    path: /block-user/{userId}
+    controller: App\Controller\UserListController::blockUser
+    methods: [POST]
+app_unblock_user:
+    path: /unblock-user/{userId}
+    controller: App\Controller\UserListController::unblockUser
+    methods: [POST]
+
+delete_user:
+    path: /delete_user/{userId}
+    controller: 'App\Controller\UserListController::deleteUser'
+    methods: [GET]
+
+delete_selected_users:
+    path: /delete_selected_users
+    controller: 'App\Controller\UserListController::deleteSelectedUsers'
+    methods: [POST]
